@@ -5,12 +5,91 @@
     <meta htt-equiv="x-ua-compatible" content="ie=edge">
     <title>Amanda's Cool Webpage</title>
     <meta name="description" content="Amanda Galemmo, on the net">
-    <meta name="viewport" content="width=device-width, initial-stale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="./style.css" type="text/css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Crimson+Pro&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Noto+Serif+SC&display=swap" rel="stylesheet">
     <!--<link rel="stylesheet" href="css/app.css">-->
   </head>
+
+<!--https://stackoverflow.com/questions/44358480/how-to-make-an-audio-play-pause-button-->
+<!--https://raw.githubusercontent.com/anars/blank-audio/master/250-milliseconds-of-silence.mp3-->
+
+  <!--<iframe hidden src="silence.mp3" allow="autoplay" style="display:none" id="iframeAudio"></iframe>
+  <div id="player">
+    <audio id="testAudio" autoplay>
+      <source src="https://api.twilio.com/cowbell.mp3" type="audio/mpeg">
+          If you're reading this, your browser does not support audio.
+    </audio>
+  </div>
+
+  <button id="playAudio">Play</button>
+  <button id="check">:0</button>
+
+  <script type = "text/javascript">
+    let a = document.getElementById("testAudio");
+    let b = document.getElementById("playAudio");
+    let c = document.getElementById("check");
+    let pageHeight = window.innerHeight;
+    //var docHeight = 0;
+    var docHeight = pageHeight;
+
+    document.addEventListener('DOMContentLoaded', (event) => {
+      c.innerHTML = ":)";
+      var body = document.body;
+      var html = document.documentElement;
+      var home = document.getElementById("home");
+      //docHeight = home.scrollHeight;
+    });
+
+    window.onmouseenter = function (event) {
+      a.volume = 1;
+      //a.play();
+      c.innerHTML = ":/";
+    };
+
+    window.onscroll = function () {
+      let value = window.scrollY;
+      let newVolume = 1 - (value/docHeight);
+      console.log("scroll:", value, " docHeight:", docHeight, " volume:", newVolume);
+      a.volume = newVolume < 0.1? 0: newVolume;
+    };
+
+    b.addEventListener("click", function(){
+      if(this.className == 'is-playing'){
+        this.className = "";
+        this.innerHTML = "Play"
+        a.pause();
+      }else{
+        this.className = "is-playing";
+        this.innerHTML = "Pause";
+        a.play();
+      }
+    });
+  </script>-->
+
+
+  <!--<audio id="testAudio" hidden src="https://api.twilio.com/cowbell.mp3" type="audio/mpeg">
+  </audio>-->
+
+  <!--<button id="playAudio">Play</button>-->
+
+  <!--<script type="text/javascript">
+  document.getElementById("playAudio").addEventListener("click", function(){
+      var audio = document.getElementById('testAudio');
+    if(this.className == 'is-playing'){
+      this.className = "";
+      this.innerHTML = "Play"
+      audio.pause();
+    }else{
+      this.className = "is-playing";
+      this.innerHTML = "Pause";
+      audio.play();
+    }
+
+  });
+</script>-->
+
   <body>
     <h1>Amanda's Cool Webpage</hl>
 
@@ -19,7 +98,7 @@
     <h2>Here's a photo I took.</h2>
 
       <img src="api-5.jpg"
-      width="757" height="521" alt="Group photo. Imagine asians.">
+      width=100% height=100% alt="Group photo. Imagine asians.">
 
     <p>A married couple learns that they are going to have a baby as Conan
       O'Brien pours perfectly good milk down the drain. <q>This milk belongs in
@@ -39,4 +118,6 @@
       <p><i>Damn that dude's long.</i></p>
 
   </body>
+
+
 </html>
