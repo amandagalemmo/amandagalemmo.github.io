@@ -1,44 +1,103 @@
 body {
-  background-color: #bc98cd;
+  background: #000000;
+  margin: 0 auto;
+  padding: 0px;
 }
 
 h1 {
-  padding: 0px;
-  margin: 0px;
-  color: green;
-  font-size: 60px;
-  font-family: '2-questa_grande_regular_31', Times New Roman;
-  src: url('2-questa_grande_regular_31-webfont.woff2') format('woff2'),
-       url('2-questa_grande_regular_31-webfont.woff') format('woff');
-  font-weight: normal;
-  font-style: normal;
+  color: #ffffff;
+  font-family: 'Lucida Console';
   text-align: center;
+  margin-top: 40px;
+
+  /*8s*/
+  animation: type 3s steps(42);
+  animation-iteration-count: infinite;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
-.nightstand{
-  width: 100%;
-  height: 850px;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 10px;
+@keyframes type {
+  0% {
+    width: 0ch;
+    margin: 0 auto;
+    padding: 40px 0px 20px 0px;
+  }
+  70%, 100% {
+    width: 42ch;
+    margin: 0 auto;
+    padding: 40px 0px 20px 0px;
+  }
+}
+
+p {
+  color: #ffffff;
+  font-family: 'Lucida Console';
+  text-align: left;
+  font-size: 20px;
+}
+
+.gameArea {
+  margin: 0 auto;
   position: relative;
-  //border: 1px solid blue;
+  width: 886px;
+  height: 720px;
+  padding-top: 20px;
 }
 
-.area{
+.chillChat {
   position: absolute;
-
 }
 
-/*make this draggable*/
-.imghp {
+#chillBG {
+  height: 720px;
+  width: 886px;
+
+  padding: 0px;
+  margin: 0 auto;
+
+  position: relative;
+
+  background-color: #000000;
+}
+
+#imgHandle {
   padding: 0px;
   margin: 0px;
-  position: absolute;
-  //background-color: blue;
+  position: relative;
 }
 
-/*.imghp:hover {
-  width: 150%;
-  height: 150%;
+#headPhone {
+  margin: 0;
+  height: 50%;
+  width: ;
+  top: 360px;
+  left: 0px;
+  position: absolute;
+}
+
+#chatBG {
+  margin: 0px;
+  padding: 0px;
+  height: 190px;
+  width: 622px;
+  bottom: 10px;
+  right: 10px;
+  position: absolute;
+}
+
+#chatText {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  margin: 0px;
+  height: 160px;
+  width: 592px;
+  border: 4px ;
+}
+
+/*#chatText {
+  animation: type 3s steps(9);
+  overflow: hidden;
+  white-space: nowrap;
 }*/
