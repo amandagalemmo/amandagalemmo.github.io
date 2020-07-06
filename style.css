@@ -1,3 +1,9 @@
+/*
+*
+* GENERAL
+*
+*/
+
 body {
   background: #000000;
   margin: 0 auto;
@@ -11,23 +17,10 @@ h1 {
   margin-top: 40px;
 
   /*8s*/
-  animation: type 3s steps(42);
+  animation: type 8s steps(42);
   animation-iteration-count: infinite;
   overflow: hidden;
   white-space: nowrap;
-}
-
-@keyframes type {
-  0% {
-    width: 0ch;
-    margin: 0 auto;
-    padding: 40px 0px 20px 0px;
-  }
-  70%, 100% {
-    width: 42ch;
-    margin: 0 auto;
-    padding: 40px 0px 20px 0px;
-  }
 }
 
 p {
@@ -45,11 +38,14 @@ p {
   padding-top: 20px;
 }
 
-.chillChat {
-  position: absolute;
+#imgHandle {
+  padding: 0px;
+  margin: 0px;
+  position: relative;
+  overflow: hidden;
 }
 
-#chillBG {
+#flatImage {
   height: 720px;
   width: 886px;
 
@@ -61,18 +57,19 @@ p {
   background-color: #000000;
 }
 
-#imgHandle {
-  padding: 0px;
-  margin: 0px;
-  position: relative;
-}
+/*
+*
+* CHAT
+*
+*/
 
-#headPhone {
-  margin: 0;
-  height: 50%;
-  width: ;
-  top: 360px;
-  left: 0px;
+#chatBG {
+  margin: 0px;
+  padding: 0px;
+  height: 190px;
+  width: 622px;
+  bottom: 10px;
+  right: 10px;
   position: absolute;
 }
 
@@ -88,16 +85,71 @@ p {
 
 #chatText {
   position: absolute;
-  right: 20px;
-  bottom: 20px;
+  right: 25px;
+  bottom: 25px;
   margin: 0px;
-  height: 160px;
-  width: 592px;
+  height: 150px;
+  width: 582px;
   border: 4px ;
 }
 
-/*#chatText {
-  animation: type 3s steps(9);
+/*
+*
+* SPRITES
+*
+*/
+
+#headPhone {
+  margin: 0;
+  height: 50%;
+  width: ;
+  bottom: 0px;
+  left: 0px;
+  position: absolute;
+}
+
+#hand { /*orig 190x111*/
+  margin: 0;
+  width: 570px;
+  height: 333px;
+  position: absolute;
+  /*right: 0px;*/
+  bottom: 170px;
+
+
+  animation: slide 10s;
   overflow: hidden;
-  white-space: nowrap;
-}*/
+}
+
+/*
+*
+* ANIMATIONS  
+*
+*/
+
+@keyframes slide {
+  0% {
+    right: -570px;
+  }
+
+  30%, 70% {
+    right: 0px;
+  }
+
+  100% {
+    right: -570px;
+  }
+}
+
+@keyframes type {
+  0% {
+    width: 0ch;
+    margin: 0 auto;
+    padding: 40px 0px 20px 0px;
+  }
+  70%, 100% {
+    width: 42ch;
+    margin: 0 auto;
+    padding: 40px 0px 20px 0px;
+  }
+}
