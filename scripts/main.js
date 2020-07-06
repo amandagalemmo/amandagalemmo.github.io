@@ -78,15 +78,15 @@ function run() {
     case 1:
       chillChat(bgImg, text0);
       break;
-    case 2:
-      cleanImg(document.getElementById('imgHandle'), document.getElementById('chatHandle'));
-      haHa(bgImg, text0);
+    case 2:   //driven
+
       break;
-    case 3:
+    case 3:   //experience
       break;
-    case 4:
+    case 4:   //funny
+      //haHa(bgImg, text0);
       break;
-    case 5:
+    case 5:   //the end
       break;
   }
 };
@@ -159,6 +159,11 @@ function chillChat(bgImg, text0) {
       node3.setAttribute('src', 'images/sqHand.gif');
       document.getElementById('imgHandle').appendChild(node3);
 
+      var node4 = document.createElement("IMG");
+      node4.setAttribute('id', 'bHand');
+      node4.setAttribute('src', 'images/backHand.gif');
+      document.getElementById('imgHandle').appendChild(node4);
+
       //wait 18s
       setTimeout(gameHandler.countUp, 180000);
       break;
@@ -202,7 +207,9 @@ function chillChat(bgImg, text0) {
   }
 };
 
-function drvn() {alert('h');};
+function drvn() {
+  if (gameHandler.map == 7) {gameHandler.setMap = 2;};
+};
 
 function exp() {};
 
