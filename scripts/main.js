@@ -1,17 +1,20 @@
 //DECLARE VARIABLES
 var count;
 var map;
+var bgSet;
 
 
 var gameHandler = {
   count: 0,
   map: 0,
+  bgSet: 0
 };
 
 Object.defineProperty(gameHandler, "init", {
   set : function () {
     this.count = 0;
     this.map = 0;
+    this.bgSet = 0;
   }
 });
 
@@ -27,6 +30,18 @@ Object.defineProperty(gameHandler, "mapUp", {
   get : function () {this.map++;}
 });
 
+Object.defineProperty(gameHandler, "setBG", {
+  get : function () {this.bgSet = 1;}
+});
+
+Object.defineProperty(gameHandler, "remBG", {
+  get : function () {this.bgSet = 0;}
+});
+
+Object.defineProperty(gameHandler, "setMap", {
+  set : function (value) {this.map = value;}
+});
+
 
 //ON LOAD
 //gameHandler initialization
@@ -34,6 +49,7 @@ function init() {
   console.log('initializing gameHandler');
   gameHandler.init;
   console.log('gameHandler: (' +  gameHandler.map + ',' + gameHandler.count + ')');
+  console.log('bg:' + gameHandler.bgSet);
   return 0;
 };
 
@@ -49,13 +65,28 @@ function run() {
   //MAP HANDLER
   switch (gameHandler.map) {
     //@BUG: needs double click. not v important
+    default:
+      for (cl = 0; cl < 2; cl++) {
+        cleanImg(document.getElementById('imgHandle'), document.getElementById('chatHandle'));
+        console.log('clean' + cl);
+      }
+      break;
     case 0:
-      console.log('gameHandler: (' +  gameHandler.map + ',' + gameHandler.count + ')');
       homepage();
-      console.log('gameHandler: (' +  gameHandler.map + ',' + gameHandler.count + ')');
+      //console.log('gameHandler: (' +  gameHandler.map + ',' + gameHandler.count + ')');
       break;
     case 1:
       chillChat(bgImg, text0);
+      break;
+    case 2:
+      cleanImg(document.getElementById('imgHandle'), document.getElementById('chatHandle'));
+      haHa(bgImg, text0);
+      break;
+    case 3:
+      break;
+    case 4:
+      break;
+    case 5:
       break;
   }
 };
@@ -68,19 +99,20 @@ function homepage() {
 
 function chillChat(bgImg, text0) {
   //BG
-  bgImg.setAttribute('src', 'images/chillBeatsBG.gif');
+  if (gameHandler.bgSet == 0){
+    bgImg.setAttribute('src', 'images/chillBeatsBG.gif');
+    gameHandler.setBG;
+  }
 
   console.log('gameHandler: (' +  gameHandler.map + ',' + gameHandler.count + ')');
 
   switch(gameHandler.count) {
+
     default:
-      console.log('gameHandler: (' +  gameHandler.map + ',' + gameHandler.count + ')');
       gameHandler.countUp;
       break;
 
     case 1:
-      console.log('gameHandler: (' +  gameHandler.map + ',' + gameHandler.count + ')');
-
       var node1 = document.createElement("IMG");
       node1.setAttribute('id', 'headPhone');
       node1.setAttribute('src', 'images/hpTemp.png');
@@ -96,9 +128,7 @@ function chillChat(bgImg, text0) {
       text0.appendChild(document.createTextNode("To whom it may concern,"));
       text0.appendChild(document.createElement("br"));
       text0.appendChild(document.createElement("br"));
-      text0.appendChild(document.createTextNode("My name is Amanda Galemmo, and I want to thank you for taking the time to engage with my extremely silly cover letter."));
-
-      animText(text0);
+      text0.appendChild(document.createTextNode("Hello. My name is Amanda Galemmo and I first want to thank you for taking the time to engage with my extremely silly cover letter."));
 
       document.getElementById('chatHandle').appendChild(text0);
       //@todo: ADD A CLICK TO GO FURTHER STATIC ELEMENT FOR END OF TEXT.
@@ -107,17 +137,21 @@ function chillChat(bgImg, text0) {
       break;
 
     case 2:
-      /*
-      Since I'm applying to a studio that makes
-      such delightfully silly games, I only hope
-      to emulate Squanch's ~vibe~ in this application.
-
-      As a comedy writer and an avid gamer *ahem* egirl bangs, gamer fuel, headphones, chair *ahem* I am very eager to apply to be a writer at... [hand comes up] Squanch.... Games. ~hm, weird name~
-      */
-
       //CLEANUP
       cleanChat(document.getElementById('chatHandle'), text0, gameHandler.count);
-      text0.appendChild(document.createTextNode("I am a writer who has worked across a variety of mediums and I've always especially loved writing for videogames."));
+
+      text0.appendChild(document.createTextNode("A bit about me before I talk more about me: I am a writer (and usually a human--I'm only the lofi hip hop beats to relax/study to headphones when I need to prove that I know #gamerculture) who has worked across various mediums, including video games!"));
+      document.getElementById('chatHandle').appendChild(text0);
+
+      gameHandler.countUp;
+      break;
+
+    case 3:
+      //CLEANUP
+      //console.log('cake');
+      cleanChat(document.getElementById('chatHandle'), text0, gameHandler.count);
+
+      text0.appendChild(document.createTextNode("I have always loved playing games and a couple years ago finally realized that I love making them as well! It is with this passion that I come to you today, eager to hopefully work with you all at... uh..."));
       document.getElementById('chatHandle').appendChild(text0);
 
       var node3 = document.createElement("IMG");
@@ -125,13 +159,92 @@ function chillChat(bgImg, text0) {
       node3.setAttribute('src', 'images/sqHand.gif');
       document.getElementById('imgHandle').appendChild(node3);
 
-      gameHandler.countUp;
-
+      //wait 18s
+      setTimeout(gameHandler.countUp, 180000);
       break;
 
+    case 4:
+      //CLEANUP EVERYTHING
+      //console.log('here');
+      //cleanImg(document.getElementById('imgHandle'), document.getElementById('chatHandle'));
+      cleanChat(document.getElementById('chatHandle'), text0, gameHandler.count);
 
+      text0.appendChild(document.createTextNode("Now comes the part where I talk about things I can do! Please choose from the options below to find out more."));
+      document.getElementById('chatHandle').appendChild(text0);
+
+      let nav = document.createElement('h2');
+      let e1 = document.createElement('a');
+      let e2 = document.createElement('a');
+      let e3 = document.createElement('a');
+
+      e1.setAttribute('onClick', 'drvn()');
+      e2.setAttribute('onClick', 'exp()');
+      e3.setAttribute('onClick', 'haHa()');
+
+      e1.appendChild(document.createTextNode('DRIVEN')); // i mean i made this in a few days
+      e2.appendChild(document.createTextNode('EXPERIENCED'));
+      e3.appendChild(document.createTextNode('FUNNY?'));
+
+      nav.appendChild(e1);
+      nav.appendChild(document.createTextNode(' | '));
+      nav.appendChild(e2);
+      nav.appendChild(document.createTextNode(' | '));
+      nav.appendChild(e3);
+      console.log(nav);
+
+      document.body.appendChild(nav);
+
+      gameHandler.setMap = 7;
+      gameHandler.countR;
+      gameHandler.remBG;
+      console.log('gameHandler: (' +  gameHandler.map + ',' + gameHandler.count + ')');
+      break;
   }
 };
+
+function drvn() {alert('h');};
+
+function exp() {};
+
+function haHa(bgImg, text0) {
+  //BG
+  /*if (gameHandler.bgSet == 0){
+    bgImg = document.createElement('IMG');
+    bgImg.setAttribute('id', 'flatImage')
+    bgImg.setAttribute('src', 'images/goldBG.gif');
+    document.getElementById('imgHandle').appendChild(bgImg);
+    gameHandler.setBG;
+  }*/
+
+  //So you want to know if I'm funny. That's fair! I guess it's a hard thing to prove ive gotten at least a couple belly laughs
+
+  console.log('gameHandler: (' +  gameHandler.map + ',' + gameHandler.count + ')');
+
+  switch(gameHandler.count) {
+
+    default:
+      var node1 = document.createElement("IMG");
+      node1.setAttribute('id', 'chatBG');
+      node1.setAttribute('src', 'images/textBG.png');
+      node1.style.width = '860px';
+      document.getElementById('chatHandle').appendChild(node1);
+
+      cleanChat(document.getElementById('chatHandle'), text0, count);
+
+      text0.appendChild(document.createTextNode(""));
+      document.getElementById('chatHandle').appendChild(text0);
+
+      gameHandler.countUp;
+      break;
+
+    case 1:
+      bgImg = document.createElement('IMG');
+      bgImg.setAttribute('id', 'flatImage')
+      bgImg.setAttribute('src', 'images/goldBG.gif');
+      document.getElementById('imgHandle').appendChild(bgImg);
+      gameHandler.setBG;
+    }
+  };
 
 function cleanChat(t,text0,c) { //param: document.getElementById('chatHandle'), count
   if (c > 0) {
@@ -143,10 +256,11 @@ function cleanChat(t,text0,c) { //param: document.getElementById('chatHandle'), 
   }
 };
 
-function animText(t) {
-  let x = t.length;
-}
-
-function lineB(output, i) {
-  output.appendChild(document.createElement("br"));
+function cleanImg(t,c) {
+  for (i = 0; i < t.childNodes.length; i++) {
+    t.removeChild(t.childNodes[i]);
+  }
+  for (i = 0; i < c.childNodes.length; i++) {
+    c.removeChild(c.childNodes[i]);
+  }
 };

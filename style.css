@@ -17,10 +17,16 @@ h1 {
   margin-top: 40px;
 
   /*8s*/
-  animation: type 8s steps(42);
+  /*animation: type 8s steps(42);
   animation-iteration-count: infinite;
   overflow: hidden;
-  white-space: nowrap;
+  white-space: nowrap;*/
+}
+
+h2 {
+  color: #ffffff;
+  font-family: 'Lucida Console';
+  text-align: center;
 }
 
 p {
@@ -28,6 +34,11 @@ p {
   font-family: 'Lucida Console';
   text-align: left;
   font-size: 20px;
+  line-height: 1.2;
+}
+
+a:hover {
+  color: #c7e6b1;
 }
 
 .gameArea {
@@ -36,6 +47,7 @@ p {
   width: 886px;
   height: 720px;
   padding-top: 20px;
+  background-color: #000000;
 }
 
 #imgHandle {
@@ -116,28 +128,28 @@ p {
   /*right: 0px;*/
   bottom: 170px;
 
-
-  animation: slide 10s;
+  /*wait 6s, 3s travel, 4s wait, 1s reg rate, then 4 sec to farther distance.*/
+  animation: slide 16s;
   overflow: hidden;
 }
 
 /*
 *
-* ANIMATIONS  
+* ANIMATIONS
 *
 */
 
 @keyframes slide {
-  0% {
+  0%, 35% {
     right: -570px;
   }
 
-  30%, 70% {
+  60%, 80% {
     right: 0px;
   }
 
   100% {
-    right: -570px;
+    right: -670px;
   }
 }
 
