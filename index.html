@@ -4,15 +4,13 @@
     <meta charset="utf-8">
     <title>Cool and Zany Cover Letter</title>
     <link href="style.css" rel = "stylesheet">
-    <!--<script src="libraries/require.js" type="text/javascript"></script>
-    <script src="libraries/anime.js" type="text/javascript"></script>-->
     <script language="Javascript" src='scripts/main.js'> </script>
   </head>
   <body onload="init()">
     <h1>galemmo_coverLetter.pdf</h1>
-    <div class="gameArea" onclick="run()">
+    <div class="gameArea">
       <div id="imgHandle">
-        <img id = "flatImage" src="images/title.gif" alt="">
+        <img id = "flatImage" src="images/title.gif" onclick="run()" alt="">
         <!-- TITLE CARD -->
         <!-- CHILLBG -->
         <!-- HEADPHONE -->
@@ -20,22 +18,8 @@
       <div id="chatHandle">
         <!-- CHAT BG -->
         <!-- TEXT -->
+        <p id="clickTo" onclick="run">(click to continue)</p>
       </div>
     </div>
-
-
-
-      <!--<div class="chillChat">
-        <div id="imgHandle">
-          <img id = "flatImage" src="images/chillBeatsBG.gif" alt="">
-          <!-- HEADPHONE -->
-        <!--</div>
-        <div id="chatHandle">
-          <!-- CHAT BG -->
-          <!-- TEXT -->
-        <!--</div>
-      </div>
-    </div>-->
-    <!--<img src="coverletterbg.png" style="height: 720px; margin: 0 auto;">-->
   </body>
 </html>

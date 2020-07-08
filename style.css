@@ -65,7 +65,7 @@ a:hover {
   margin: 0 auto;
 
   position: relative;
-
+  overflow: hidden;
   background-color: #000000;
 }
 
@@ -85,16 +85,6 @@ a:hover {
   position: absolute;
 }
 
-#chatBG {
-  margin: 0px;
-  padding: 0px;
-  height: 190px;
-  width: 622px;
-  bottom: 10px;
-  right: 10px;
-  position: absolute;
-}
-
 #chatText {
   position: absolute;
   right: 25px;
@@ -103,6 +93,15 @@ a:hover {
   height: 150px;
   width: 582px;
   border: 4px ;
+}
+
+#clickTo {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  margin: 0px;
+  font-size: 10px;
+  z-index: 2;
 }
 
 /*
@@ -133,6 +132,18 @@ a:hover {
   overflow: hidden;
 }
 
+#bHand { /*289x156*/
+  margin: 0;
+  width: 289px;
+  height: 156px;
+  position: absolute;
+  left: -289px;
+  bottom:0px;
+
+  animation: slideR 16s;
+  overflow: hidden;
+}
+
 /*
 *
 * ANIMATIONS
@@ -140,7 +151,7 @@ a:hover {
 */
 
 @keyframes slide {
-  0%, 35% {
+  0%, 20% {
     right: -570px;
   }
 
@@ -150,6 +161,20 @@ a:hover {
 
   100% {
     right: -670px;
+  }
+}
+
+@keyframes slideR {
+  0%, 20% {
+    left: -289px;
+  }
+
+  60%, 80% {
+    left: 0px;
+  }
+
+  100% {
+    left: -350px;
   }
 }
 
