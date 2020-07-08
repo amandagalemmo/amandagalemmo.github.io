@@ -127,7 +127,7 @@ function chillChat(bgImg, text0) {
       text0.appendChild(document.createTextNode("To whom it may concern,"));
       text0.appendChild(document.createElement("br"));
       text0.appendChild(document.createElement("br"));
-      text0.appendChild(document.createTextNode("Hello. My name is Amanda Galemmo and I first want to thank you for taking the time to engage with my extremely silly cover letter."));
+      text0.appendChild(document.createTextNode("Hello. My name is Amanda Galemmo and I first want to thank you for taking the time to engage with my fun cover letter. A \"funver letter\", if you will. Or don't, actually. I take that back."));
 
       document.getElementById('chatHandle').appendChild(text0);
       //@todo: ADD A CLICK TO GO FURTHER STATIC ELEMENT FOR END OF TEXT.
