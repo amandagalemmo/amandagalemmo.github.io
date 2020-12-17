@@ -68,7 +68,7 @@ window.onload = function() {
         visited: false,
         neighbors: adjacent[(r * COLS + c)],
         color: colors.hidden,
-        flagged: false;
+        flagged: false
       };
     }
   }
