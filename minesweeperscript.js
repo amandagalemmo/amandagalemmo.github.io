@@ -13,6 +13,14 @@ var COLS;
 var leftPadding;
 var topPadding;
 
+var numMines;
+var numTiles;
+var playerInit;
+var playerR;
+var playerC;
+var adjacent;
+var score;
+
 window.onload = function() {
   console.log('loaded');
   canvas = document.getElementById('gameBoard');
@@ -24,6 +32,15 @@ window.onload = function() {
   COLS = Math.floor(ctx.canvas.width / TILEDIM);
   leftPadding = Math.ceil((ctx.canvas.width - (COLS * TILEDIM)) / 2);
   topPadding = Math.ceil((ctx.canvas.height - (ROWS * TILEDIM)) / 2);
+  numTiles = ROWS * COLS;
+  numMines = Math.ceil(numTiles * .2);
+
+  playerInit = getRandomInt(numTiles);              // player initial location
+  playerR = Math.floor(playerInit / COLS);          // player initial R coord
+  playerC = playerInit - playerR * COLS;            // player initial C coord
+
+  adjacent = initializeBoard();
+  score = 0;
 }
 
 const TILEDIM = 24;                                   // Dimensions of each tile
@@ -34,16 +51,7 @@ sprite.src = 'guy.png';
 // const ROWS = 9;
 // const COLS = 9;
 
-const numTiles = ROWS * COLS;
-const numMines = Math.ceil(numTiles * .2);
 
-var playerInit = getRandomInt(numTiles);              // player initial location
-var playerR = Math.floor(playerInit / COLS);          // player initial R coord
-var playerC = playerInit - playerR * COLS;            // player initial C coord
-
-var adjacent = initializeBoard();
-
-var score = 0;
 
 // Palette
 var colors = {
