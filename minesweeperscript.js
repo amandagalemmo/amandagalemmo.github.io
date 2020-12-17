@@ -39,10 +39,8 @@ var colors = {
 }
 
 window.onload = function() {
-  console.log('loaded');
   canvas = document.getElementById('gameBoard');
   ctx = canvas.getContext('2d');
-  console.log(ctx);
   ctx.canvas.width = window.innerWidth;
   ctx.canvas.height = window.innerHeight;
   ROWS = Math.floor(ctx.canvas.height / TILEDIM)
@@ -69,10 +67,12 @@ window.onload = function() {
         num: (r * COLS + c),
         visited: false,
         neighbors: adjacent[(r * COLS + c)],
-        color: colors.hidden
+        color: colors.hidden,
+        flagged: false;
       };
     }
   }
+  console.log('loaded');
   move();
   draw();
 }
@@ -80,6 +80,18 @@ window.onload = function() {
 // UI___________________________________________________________________________
 window.addEventListener('resize', reportWindowSize);
 document.addEventListener('keydown', keyDownHandler, {once: true});
+document.addEventListener('click', clickHandler);
+
+function clickHandler(e) {
+  let clickC = Math.ceil((e.clientX - leftPadding) / TILEDIM);
+  let clickR = Math.ceil((e.clientY - topPadding) / TILEDIM);
+  if (tiles[clickR][clickC].flagged) {
+    tiles[clickR][clickC].flagged = false;
+  } else if (!tiles[clickR][clickC].visited) {
+    tiles[clickR][clickC].flagged = true;
+  } else {return;}
+  drawFlag(clickR, clickC);
+}
 
 function reportWindowSize() {
     ctx.canvas.width = window.innerWidth - TILEDIM;
@@ -91,13 +103,13 @@ function reportWindowSize() {
 
 function keyDownHandler(e) {
   if (e.key === "Right" || e.key === "ArrowRight" || e.key === 'A') {
-    if (playerC < COLS - 1) playerC++;
+    if (playerC < COLS - 1 && !tiles[playerR][playerC+1].flagged) playerC++;
   } else if (e.key === "Left" || e.key === "ArrowLeft" || e.key === 'D') {
-    if (playerC > 0) playerC--;
+    if (playerC > 0 && !tiles[playerR][playerC-1].flagged) playerC--;
   } else if (e.key === "Down" || e.key === "ArrowDown" || e.key === 'S') {
-    if (playerR < ROWS  - 1) playerR++;
+    if (playerR < ROWS  - 1 && !tiles[playerR+1][playerC].flagged) playerR++;
   } else if (e.key === "Up" || e.key === "ArrowUp" || e.key === 'W') {
-    if (playerR > 0) playerR--;
+    if (playerR > 0 && !tiles[playerR-1][playerC].flagged) playerR--;
   }
 
   setTimeout(function() {
@@ -147,10 +159,12 @@ function initializeBoard() {
   return adjacent;
 }
 
+// Drawing functions____________________________________________________________
 function drawBoard() {
   for (var r = 0; r < ROWS; r++) {
     for (var c = 0; c < COLS; c++) {
-      drawTile(r,c);
+      drawFlag(r, c);
+      drawPlayer();
       if (tiles[r][c].visited) {drawHint(r,c)};
     }
   }
@@ -165,14 +179,15 @@ function drawTile(r, c) {
   ctx.closePath();
 }
 
+//ctx.rect(tiles[playerR][playerC].cX + leftPadding, tiles[playerR][playerC].cY + topPadding,
+//         TILEDIM, TILEDIM);
+//ctx.fillStyle = 'rgba(163, 214, 200, 0.5)';
+// ctx.lineWidth = '3';
+// ctx.strokeStyle = colors['player'];
 function drawPlayer() {
   ctx.beginPath();
-  ctx.drawImage(sprite, tiles[playerR][playerC].cX + leftPadding, tiles[playerR][playerC].cY + topPadding);
-  //ctx.rect(tiles[playerR][playerC].cX + leftPadding, tiles[playerR][playerC].cY + topPadding,
-  //         TILEDIM, TILEDIM);
-  //ctx.fillStyle = 'rgba(163, 214, 200, 0.5)';
-  // ctx.lineWidth = '3';
-  // ctx.strokeStyle = colors['player'];
+  ctx.drawImage(sprite, tiles[playerR][playerC].cX + leftPadding,
+    tiles[playerR][playerC].cY + topPadding);
   ctx.fill();
   ctx.closePath();
 }
@@ -184,16 +199,35 @@ function drawHint(r, c) {
     tiles[r][c].cX + 8 + leftPadding, tiles[r][c].cY + 16+ topPadding, TILEDIM);
 }
 
+function drawFlag(r, c) {
+  if (tiles[r][c].flagged) {
+    ctx.font = '12 px Arial';
+    ctx.fillStyle = 'white';
+    ctx.fillText('!',
+      tiles[r][c].cX+8+leftPadding, tiles[r][c].cY+16+topPadding, TILEDIM);
+  } else {
+    drawTile(r, c);
+  }
+}
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawBoard();
+  drawPlayer();
+}
+
+// Move player__________________________________________________________________
 function move() {
-  if (tiles[playerR][playerC].neighbors === 9) {    // if tile is mine
+  // if the tile is a mine...
+  if (tiles[playerR][playerC].neighbors === 9) {
     gameOver = true;
     sprite.src = 'guySad.png';
     handleGameOver();
+    return;
   }
   // if the tile we just moved to hasn't been visited...
   if (!tiles[playerR][playerC].visited) {
     tiles[playerR][playerC].visited = true;
-
     let exposeQ = [];
     let currQueue = new Set();
     exposeQ.push(tiles[playerR][playerC]);
@@ -270,13 +304,6 @@ function handleTile(r, c) {
   return toQueue;
 }
 
-function handleGameOver() {
-  console.log('GAME OVER!');
-  drawBoard();
-  setTimeout(alert, 250, 'Game over! Refresh to play again');
-  document.removeEventListener('keydown', keyDownHandler, {once: true});
-}
-
 function assignColor(tile) {
   if (tile.neighbors === 0) {
     tile.color = colors.seenNear;
@@ -287,9 +314,9 @@ function assignColor(tile) {
   }
 }
 
-// Running this thing__________________________________________________________
-function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+function handleGameOver() {
+  console.log('GAME OVER!');
   drawBoard();
-  drawPlayer();
+  setTimeout(alert, 250, 'Game over! Refresh to play again');
+  document.removeEventListener('keydown', keyDownHandler, {once: true});
 }
