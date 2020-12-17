@@ -22,6 +22,21 @@ var adjacent;
 var score;
 var tiles;
 
+const TILEDIM = 24;                                   // Dimensions of each tile
+
+const sprite = new Image();
+sprite.src = 'guy.png';
+
+// Palette
+var colors = {
+  hidden: '#355070',
+  borderDistant: '#6d597a',
+  seenDistant: '#b56578',
+  borderNear: '#e56b6f',
+  seenNear: '#eaac8b',
+  player: '#a3d6c8'    //rgba(163, 214, 200, 0.5)
+}
+
 window.onload = function() {
   console.log('loaded');
   canvas = document.getElementById('gameBoard');
@@ -57,27 +72,18 @@ window.onload = function() {
       };
     }
   }
+  move();
+  draw();
 }
 
-const TILEDIM = 24;                                   // Dimensions of each tile
 
-const sprite = new Image();
-sprite.src = 'guy.png';
 
 // const ROWS = 9;
 // const COLS = 9;
 
 
 
-// Palette
-var colors = {
-  hidden: '#355070',
-  borderDistant: '#6d597a',
-  seenDistant: '#b56578',
-  borderNear: '#e56b6f',
-  seenNear: '#eaac8b',
-  player: '#a3d6c8'    //rgba(163, 214, 200, 0.5)
-}
+
 
 
 
@@ -306,5 +312,3 @@ function draw() {
   drawBoard();
   drawPlayer();
 }
-move();
-draw();
