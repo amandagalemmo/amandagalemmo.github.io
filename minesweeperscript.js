@@ -7,17 +7,26 @@
 // Initializations______________________________________________________________
 var canvas;
 var ctx;
+
+var ROWS;
+var COLS;
+var leftPadding;
+var topPadding;
+
 window.onload = function() {
   console.log('loaded');
   canvas = document.getElementById('gameBoard');
   ctx = canvas.getContext('2d');
+  console.log(ctx);
   ctx.canvas.width = window.innerWidth;
   ctx.canvas.height = window.innerHeight;
+  ROWS = Math.floor(ctx.canvas.height / TILEDIM)
+  COLS = Math.floor(ctx.canvas.width / TILEDIM);
+  leftPadding = Math.ceil((ctx.canvas.width - (COLS * TILEDIM)) / 2);
+  topPadding = Math.ceil((ctx.canvas.height - (ROWS * TILEDIM)) / 2);
 }
 
 const TILEDIM = 24;                                   // Dimensions of each tile
-const ROWS = Math.floor(ctx.canvas.height / TILEDIM); // might not always be a constant
-const COLS = Math.floor(ctx.canvas.width / TILEDIM); // might not always be a constant
 
 const sprite = new Image();
 sprite.src = 'guy.png';
@@ -27,9 +36,6 @@ sprite.src = 'guy.png';
 
 const numTiles = ROWS * COLS;
 const numMines = Math.ceil(numTiles * .2);
-
-var leftPadding = Math.ceil((ctx.canvas.width - (COLS * TILEDIM)) / 2);
-var topPadding = Math.ceil((ctx.canvas.height - (ROWS * TILEDIM)) / 2);
 
 var playerInit = getRandomInt(numTiles);              // player initial location
 var playerR = Math.floor(playerInit / COLS);          // player initial R coord
