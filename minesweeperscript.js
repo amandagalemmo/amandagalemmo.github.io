@@ -20,6 +20,7 @@ var playerR;
 var playerC;
 var adjacent;
 var score;
+var tiles;
 
 window.onload = function() {
   console.log('loaded');
@@ -41,6 +42,21 @@ window.onload = function() {
 
   adjacent = initializeBoard();
   score = 0;
+
+  tiles = [];
+  for (var r = 0; r < ROWS; r++) {
+    tiles[r] = [];
+    for (var c = 0; c < COLS; c++) {
+      tiles[r][c] = {
+        cX : c * TILEDIM,      //coords for canvas
+        cY: r * TILEDIM,       //coords for canvas
+        num: (r * COLS + c),
+        visited: false,
+        neighbors: adjacent[(r * COLS + c)],
+        color: colors.hidden
+      };
+    }
+  }
 }
 
 const TILEDIM = 24;                                   // Dimensions of each tile
@@ -63,20 +79,7 @@ var colors = {
   player: '#a3d6c8'    //rgba(163, 214, 200, 0.5)
 }
 
-var tiles = [];
-for (var r = 0; r < ROWS; r++) {
-  tiles[r] = [];
-  for (var c = 0; c < COLS; c++) {
-    tiles[r][c] = {
-      cX : c * TILEDIM,      //coords for canvas
-      cY: r * TILEDIM,       //coords for canvas
-      num: (r * COLS + c),
-      visited: false,
-      neighbors: adjacent[(r * COLS + c)],
-      color: colors.hidden
-    };
-  }
-}
+
 
 // UI___________________________________________________________________________
 window.addEventListener('resize', reportWindowSize);
