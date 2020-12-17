@@ -5,12 +5,12 @@
     - endgame. expose all bricks/hints*/
 
 // Initializations______________________________________________________________
-var canvas = document.getElementById('gameBoard');
-var ctx = canvas.getContext('2d');
-ctx.canvas.width = window.innerWidth;
-ctx.canvas.height = window.innerHeight;
-
-
+window.onload = function() {
+  var canvas = document.getElementById('gameBoard');
+  var ctx = canvas.getContext('2d');
+  ctx.canvas.width = window.innerWidth;
+  ctx.canvas.height = window.innerHeight;
+}
 
 const TILEDIM = 24;                                   // Dimensions of each tile
 const ROWS = Math.floor(ctx.canvas.height / TILEDIM); // might not always be a constant
