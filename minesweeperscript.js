@@ -21,6 +21,7 @@ var playerC;
 var adjacent;
 var score;
 var tiles;
+var gameOver = false;
 
 const TILEDIM = 24;                                   // Dimensions of each tile
 
@@ -75,17 +76,6 @@ window.onload = function() {
   move();
   draw();
 }
-
-
-
-// const ROWS = 9;
-// const COLS = 9;
-
-
-
-
-
-
 
 // UI___________________________________________________________________________
 window.addEventListener('resize', reportWindowSize);
@@ -157,17 +147,6 @@ function initializeBoard() {
   return adjacent;
 }
 
-function prettyPrint() {
-  let str = [];
-  for (var r = 0; r < ROWS; r++) {
-    for (var c = 0; c < COLS; c++) {
-      str.push(tiles[r][c].hint);
-    }
-    str.push('\n')
-  }
-  return str.join('');
-}
-
 function drawBoard() {
   for (var r = 0; r < ROWS; r++) {
     for (var c = 0; c < COLS; c++) {
@@ -203,18 +182,17 @@ function drawHint(r, c) {
   ctx.fillStyle = 'white';
   ctx.fillText(tiles[r][c].neighbors>0 ? `${tiles[r][c].neighbors}` : ' ',
     tiles[r][c].cX + 8 + leftPadding, tiles[r][c].cY + 16+ topPadding, TILEDIM);
-  /*ctx.fillText(`${tiles[r][c].num}`,
-      tiles[r][c].cX + 8, tiles[r][c].cY + 16, TILEDIM);*/
 }
 
 function move() {
   if (tiles[playerR][playerC].neighbors === 9) {    // if tile is mine
-    gameOver();
+    gameOver = true;
+    sprite.src = 'guySad.png';
+    handleGameOver();
   }
   // if the tile we just moved to hasn't been visited...
   if (!tiles[playerR][playerC].visited) {
     tiles[playerR][playerC].visited = true;
-    //console.log(`[[${playerR},${playerC}]]`);
 
     let exposeQ = [];
     let currQueue = new Set();
@@ -292,8 +270,11 @@ function handleTile(r, c) {
   return toQueue;
 }
 
-function gameOver() {
-  console.log('GAME OVER!')
+function handleGameOver() {
+  console.log('GAME OVER!');
+  drawBoard();
+  setTimeout(alert, 250, 'Game over! Refresh to play again');
+  document.removeEventListener('keydown', keyDownHandler, {once: true});
 }
 
 function assignColor(tile) {
