@@ -5,9 +5,12 @@
     - endgame. expose all bricks/hints*/
 
 // Initializations______________________________________________________________
+var canvas;
+var ctx;
 window.onload = function() {
-  var canvas = document.getElementById('gameBoard');
-  var ctx = canvas.getContext('2d');
+  console.log('loaded');
+  canvas = document.getElementById('gameBoard');
+  ctx = canvas.getContext('2d');
   ctx.canvas.width = window.innerWidth;
   ctx.canvas.height = window.innerHeight;
 }
