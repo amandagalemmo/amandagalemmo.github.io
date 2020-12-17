@@ -83,8 +83,8 @@ document.addEventListener('keydown', keyDownHandler, {once: true});
 document.addEventListener('click', clickHandler);
 
 function clickHandler(e) {
-  let clickC = Math.floor((e.clientX - leftPadding) / TILEDIM);
-  let clickR = Math.floor((e.clientY - topPadding) / TILEDIM);
+  let clickC = Math.floor((e.clientX - leftPadding) / TILEDIM) - 1;
+  let clickR = Math.floor((e.clientY - topPadding) / TILEDIM) - 1;
   if (tiles[clickR][clickC].flagged) {
     tiles[clickR][clickC].flagged = false;
   } else if (!tiles[clickR][clickC].visited) {
