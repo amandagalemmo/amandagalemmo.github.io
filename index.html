@@ -2,24 +2,12 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Cool and Zany Cover Letter</title>
-    <link href="style.css" rel = "stylesheet">
-    <script language="Javascript" src='scripts/main.js'> </script>
+    <title>Minesweeper is a Roguelike</title>
+    <link href="styles.css" rel = "stylesheet">
+    <script language="Javascript" src='scripts/minesweeperscript.js'> </script>
   </head>
-  <body onload="init()">
-    <h1>galemmo_coverLetter.pdf</h1>
-    <div class="gameArea">
-      <div id="imgHandle">
-        <img id = "flatImage" src="images/title.gif" onclick="run()" alt="">
-        <!-- TITLE CARD -->
-        <!-- CHILLBG -->
-        <!-- HEADPHONE -->
-      </div>
-      <div id="chatHandle">
-        <!-- CHAT BG -->
-        <!-- TEXT -->
-        <p id="clickTo" onclick="run">(click to continue)</p>
-      </div>
-    </div>
+  <body>
+    <canvas id="gameBoard">
+    </canvas>
   </body>
 </html>
