@@ -48,7 +48,7 @@ window.onload = function() {
   leftPadding = Math.ceil((ctx.canvas.width - (COLS * TILEDIM)) / 2);
   topPadding = Math.ceil((ctx.canvas.height - (ROWS * TILEDIM)) / 2);
   numTiles = ROWS * COLS;
-  numMines = Math.ceil(numTiles * .2);
+  numMines = Math.ceil(numTiles * .125);
 
   playerInit = getRandomInt(numTiles);              // player initial location
   playerR = Math.floor(playerInit / COLS);          // player initial R coord
