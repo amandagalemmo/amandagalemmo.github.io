@@ -102,14 +102,18 @@ function reportWindowSize() {
 }
 
 function keyDownHandler(e) {
-  if (e.key === "Right" || e.key === "ArrowRight" || e.key === 'A') {
+  if (e.key === "Right" || e.key === "ArrowRight" || e.key === 'd') {
     if (playerC < COLS - 1 && !tiles[playerR][playerC+1].flagged) playerC++;
-  } else if (e.key === "Left" || e.key === "ArrowLeft" || e.key === 'D') {
+    console.log('keydown right');
+  } else if (e.key === "Left" || e.key === "ArrowLeft" || e.key === 'a') {
     if (playerC > 0 && !tiles[playerR][playerC-1].flagged) playerC--;
-  } else if (e.key === "Down" || e.key === "ArrowDown" || e.key === 'S') {
+    console.log('keydown left');
+  } else if (e.key === "Down" || e.key === "ArrowDown" || e.key === 's') {
     if (playerR < ROWS  - 1 && !tiles[playerR+1][playerC].flagged) playerR++;
-  } else if (e.key === "Up" || e.key === "ArrowUp" || e.key === 'W') {
+    console.log('keydown down');
+  } else if (e.key === "Up" || e.key === "ArrowUp" || e.key === 'w') {
     if (playerR > 0 && !tiles[playerR-1][playerC].flagged) playerR--;
+    console.log('keydown up');
   }
 
   setTimeout(function() {
@@ -232,20 +236,20 @@ function move() {
     let currQueue = new Set();
     exposeQ.push(tiles[playerR][playerC]);
     while (exposeQ.length > 0 && exposeQ[0] !== null) {
-      console.log('exposeQ ' + exposeQ + ' len: ' + exposeQ.length);
+      //console.log('exposeQ ' + exposeQ + ' len: ' + exposeQ.length);
       let currNode = exposeQ.shift();
       currQueue.delete(currNode);
-      console.log('currNode: ' + currNode.cY + ' ' + currNode.cX);
+      //console.log('currNode: ' + currNode.cY + ' ' + currNode.cX);
       //handles current tile, returns list of exposure-ready neighbors
       let result = handleTile(currNode.cY / TILEDIM, currNode.cX / TILEDIM);
       if (result !== null && result.length > 0) {
-        console.log('result: ' + result + ' result length: ' + result.length);
-        console.log(result[0] === result[1]);
+        //console.log('result: ' + result + ' result length: ' + result.length);
+        //console.log(result[0] === result[1]);
         for (let r of result) {
-          console.log(`\t[${r.cY/TILEDIM}][${r.cX/TILEDIM}]`);
+          //console.log(`\t[${r.cY/TILEDIM}][${r.cX/TILEDIM}]`);
           currQueue.add(r);
         }
-        console.log(currQueue.size);
+        //console.log(currQueue.size);
         exposeQ = [...currQueue];
       }
     }
