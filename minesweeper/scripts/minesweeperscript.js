@@ -27,12 +27,10 @@ var gameOver = false;
 const TILEDIM = 24;                                   // Dimensions of each tile
 
 const sprite = new Image();
-sprite.src = '../img/guy.png';
+sprite.src = 'https://amandagalemmo.github.io/minesweeper/img/guy.png';
 
 const flag_img = new Image();
-flag_img.src = '../img/flag.png';
-
-
+flag_img.src = 'https://amandagalemmo.github.io/minesweeper/img/flag.png';
 
 // Palette
 var colors = {
@@ -49,16 +47,6 @@ window.onload = function() {
   ctx = canvas.getContext('2d');
   ctx.canvas.width = window.innerWidth;
   ctx.canvas.height = window.innerHeight;
-
-  var game = new Phaser.Game(ctx.canvas.width, ctx.canvas.height, canvas, 
-    {preload: preload, create: create});
-
-  function preload() {
-    // each tile is 32x32
-    // 3 frames in each sprite sheet
-
-    game.load.spritesheet('')
-  }
 
   ROWS = Math.floor(ctx.canvas.height / TILEDIM)
   COLS = Math.floor(ctx.canvas.width / TILEDIM);
