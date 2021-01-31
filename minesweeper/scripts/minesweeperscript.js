@@ -27,10 +27,10 @@ var gameOver = false;
 const TILEDIM = 24;                                   // Dimensions of each tile
 
 const sprite = new Image();
-sprite.src = 'minesweeper\img\guy.png';
+sprite.src = 'img/guy.png';
 
 const flag_img = new Image();
-flag_img.src = 'minesweeper\img\flag.png';
+flag_img.src = 'img/flag.png';
 
 // Palette
 var colors = {
@@ -242,7 +242,7 @@ function move() {
   // if the tile is a mine...
   if (tiles[playerR][playerC].neighbors === 9) {
     gameOver = true;
-    sprite.src = 'minesweeper\img\guySad.png';
+    sprite.src = 'img/guySad.png';
     handleGameOver();
     return;
   }
