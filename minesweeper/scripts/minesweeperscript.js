@@ -18,10 +18,9 @@ var numTiles;
 var playerInit;
 var playerR;
 var playerC;
-var adjacent;
+var adjacent;  // {[tileIndex: number]: number}
 var score;
-var tiles;
-var gameOver = false;
+var tiles; // 2d array of tile objects
 
 // @TODO: change to 32
 const TILEDIM = 24;                                   // Dimensions of each tile
@@ -39,12 +38,14 @@ var colors = {
   seenDistant: '#b56578',
   borderNear: '#e56b6f', 
   seenNear: '#eaac8b',
-  player: '#a3d6c8'    //rgba(163, 214, 200, 0.5)
+  player: '#a3d6c8',    //rgba(163, 214, 200, 0.5)
+  goalTile: '#32b855',
 }
 
 window.onload = function() {
   canvas = document.getElementById('gameBoard');
   ctx = canvas.getContext('2d');
+
   ctx.canvas.width = window.innerWidth;
   ctx.canvas.height = window.innerHeight;
 
@@ -53,13 +54,13 @@ window.onload = function() {
   leftPadding = Math.ceil((ctx.canvas.width - (COLS * TILEDIM)) / 2);
   topPadding = Math.ceil((ctx.canvas.height - (ROWS * TILEDIM)) / 2);
   numTiles = ROWS * COLS;
-  numMines = Math.ceil(numTiles * .125);
+  numMines = Math.ceil(numTiles * .125); //TODO extract to variable
 
   playerInit = getRandomInt(numTiles);              // player initial location
   playerR = Math.floor(playerInit / COLS);          // player initial R coord
-  playerC = playerInit - playerR * COLS;            // player initial C coord
+  playerC = playerInit % COLS;            // player initial C coord
 
-  adjacent = initializeBoard();
+  adjacent = setMines();
   score = 0;
 
   tiles = [];
@@ -69,14 +70,17 @@ window.onload = function() {
       tiles[r][c] = {
         cX : c * TILEDIM,      //coords for canvas
         cY: r * TILEDIM,       //coords for canvas
-        num: (r * COLS + c),
+        num: (r * COLS + c), // Index of tile in flat array
         visited: false,
         neighbors: adjacent[(r * COLS + c)],
         color: colors.hidden,
-        flagged: false
+        flagged: false,
+        goalTile: false
       };
     }
   }
+
+  setGoalTile();
   console.log('loaded');
   move();
   draw();
@@ -87,9 +91,17 @@ window.addEventListener('resize', reportWindowSize);
 document.addEventListener('keydown', keyDownHandler, {once: true});
 document.addEventListener('click', clickHandler);
 
+window.addEventListener("keydown", function(e) {
+  if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].indexOf(e.code) > -1) {
+      e.preventDefault();
+  }
+}, false);
+
 function clickHandler(e) {
   let clickC = Math.floor((e.clientX - leftPadding) / TILEDIM);
   let clickR = Math.floor((e.clientY - topPadding) / TILEDIM);
+  console.log("clickC", clickC);
+  console.log("clickR", clickR);
   if (tiles[clickR][clickC].flagged) {
     tiles[clickR][clickC].flagged = false;
   } else if (!tiles[clickR][clickC].visited) {
@@ -132,8 +144,7 @@ function getRandomInt(numTiles) {
   return Math.floor(Math.random() * numTiles);
 }
 
-// @TODO: must refactor this
-function initializeBoard() {
+function setMines() {
   let adjacent = new Array(numTiles).fill(0);
   let m = 0;
   // The following is a hacky way to establish borders when counting adjacency
@@ -145,11 +156,11 @@ function initializeBoard() {
   while (m < numMines) {
     let i = getRandomInt(numTiles);
     // @TODO: do not like that it's a while loop
-    while (true) {
-      if (i === playerInit || adjacent[i] === 9) {
-        i = getRandomInt(numTiles);
-      } else {break;}
+    while (i === playerInit || adjacent[i] === 9) {
+      i = getRandomInt(numTiles);
     }
+
+    // Mine is at tile i, so adjacency is 9.
     adjacent[i] = 9;
     for (let y = -COLS; y <= COLS; y += COLS) {
       if (i + y < 0 || i + y >= numTiles) {continue;}
@@ -166,6 +177,19 @@ function initializeBoard() {
     m++;
   }
   return adjacent;
+}
+
+function setGoalTile() {
+  let goalTileIndex = getRandomInt(numTiles);
+  while (adjacent[goalTileIndex] === 9) {
+    goalTileIndex = getRandomInt(numTiles);
+  }
+
+  // @TODO: make sure it's possible to reach goal from start
+  // rowNum = Math.floor(tileIndex/COLS);
+  // colNum = tileindex % COLS;
+  tiles[Math.floor(goalTileIndex/COLS)][goalTileIndex % COLS].goalTile = true;
+  tiles[Math.floor(goalTileIndex/COLS)][goalTileIndex % COLS].color = colors.goalTile;
 }
 
 // Drawing functions____________________________________________________________
@@ -241,11 +265,16 @@ function draw() {
 function move() {
   // if the tile is a mine...
   if (tiles[playerR][playerC].neighbors === 9) {
-    gameOver = true;
     sprite.src = 'img/guySad.png';
     handleGameOver();
     return;
   }
+
+  // if the tile is the goal...
+  if (tiles[playerR][playerC].goalTile) {
+    handleWin();
+  }
+
   // if the tile we just moved to hasn't been visited...
   if (!tiles[playerR][playerC].visited) {
     tiles[playerR][playerC].visited = true;
@@ -320,6 +349,7 @@ function handleTile(r, c) {
 }
 
 function assignColor(tile) {
+  if (tile.goalTile) return;
   if (tile.neighbors === 0) {
     tile.color = colors.seenNear;
   } else if (tile.neighbors === 9) {
@@ -335,4 +365,8 @@ function handleGameOver() {
   drawPlayer();
   setTimeout(alert, 250, 'Game over! Refresh to play again');
   document.removeEventListener('keydown', keyDownHandler, {once: true});
+}
+
+function handleWin() {
+  console.log('YOU MADE IT!');
 }
