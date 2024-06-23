@@ -1,5 +1,5 @@
 @font-face {
-  font-family: "Bertholder Mainzer Fraktur";
+  font-family: "Bertholdr Mainzer Fraktur";
   src: url("fonts/bertholdr-mainzer-fraktur/Bertholdr\ Mainzer\ Fraktur.ttf");
 }
 
@@ -8,28 +8,32 @@
   src: url("fonts/Cormorant_Garamond/CormorantGaramond-Regular.ttf");
 }
 
+:root {
+  --font-default: "Cormorant Garamond";
+  --font-title: "Bertholdr Mainzer Fraktur";
+}
+
 html {
   background: #000000;
   margin: 0 0;
   padding: 0px;
+  color: #ffffff;
+  font-family: var(--font-default);
+  font-size: 16px;
 }
 
 h1 {
   color: #ffffff;
-  font-family: 'Bertholder Mainzer Fraktur';
+  font-family: var(--font-title);
   font-size: 36px;
 }
 
 h2 {
   color: #ffffff;
-  font-family: 'Cormorant Garamond';
 }
 
 p {
-  color: #ffffff;
-  font-family: 'Cormorant Garamond';
   text-align: left;
-  font-size: 16px;
   line-height: 1.2;
 }
 
@@ -39,6 +43,14 @@ a {
 
 a :hover {
   color: #BC0119;
+}
+
+li {
+  color: #ffffff;
+}
+
+label {
+  font-size: 1.25rem;
 }
 
 .centered {
@@ -53,8 +65,10 @@ a :hover {
   padding: 8px 24px;
 }
 
-.title {
-  /* cursor: default; */
+.body-container {
+  padding: 24px 64px;
+  height: 100%;
+  border: 4mm ridge rgba(255, 255, 255, 0.6);
 }
 
 .links-container {
@@ -78,4 +92,29 @@ a :hover {
   background-size: 100 100;
   height: 100%;
   width: 100%;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.form-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.form-row input, .form-col textarea {
+  width: 100%;
+}
+
+.bottom-border {
+  border-bottom: solid #ffffff;
+}
+
+.padding-bottom-sm {
+  padding-bottom: 4px;
 }
