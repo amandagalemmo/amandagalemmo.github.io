@@ -11,20 +11,34 @@
 :root {
   --font-default: "Cormorant Garamond";
   --font-title: "Bertholdr Mainzer Fraktur";
-  --font-color-default: #fff;
+  --background-color: #BCA693;
+  --font-color: #0B100C;
+  --link-color: #e1001e;
+  --link-hover-color: #BC0119;
+  --link-visited-color: #1D4E17;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #0B100C;
+      --font-color: #ffffff;
+      --link-color: #BCA693;
+      --link-hover-color: #BC0119;
+      --link-visited-color: #1D4E17;
+    }
 }
 
 html {
-  background: #000000;
+  background: var(--background-color);
   margin: 0 0;
   padding: 0px;
-  color: var(--font-color-default);
+  color: var(--font-color);
   font-family: var(--font-default);
   font-size: 16px;
 }
 
 h1 {
-  color: var(--font-color-default);
+  color: var(--font-color);
   font-size: 36px;
 }
 
@@ -33,34 +47,35 @@ h1 {
 }
 
 h2 {
-  color: var(--font-color-default);
+  color: var(--font-color);
 }
 
 h3 {
-  color: var(--font-color-default);
+  color: var(--font-color);
 }
 
 p {
-  color: var(--font-color-default);
+  color: var(--font-color);
   text-align: left;
   line-height: 1.2;
 }
 
 a {
   text-decoration: none;
-  color: var(--font-color-default);
+  color: var(--font-color);
 }
 
 a:visited {
-  color: #ffdddd
+  /* color: #ffdddd */
+  color: var(--link-visited-color);
 }
 
 a:hover, a :hover {
-  color: #BC0119;
+  color: var(--link-hover-color)
 }
 
 li {
-  color: var(--font-color-default);
+  color: var(--font-color);
 }
 
 label {
@@ -123,10 +138,6 @@ label {
 
 .form-row input, .form-col textarea {
   width: 100%;
-}
-
-.bottom-border {
-  border-bottom: solid #ffffff;
 }
 
 .padding-bottom-sm {
