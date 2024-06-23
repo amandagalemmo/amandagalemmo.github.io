@@ -11,34 +11,46 @@
 :root {
   --font-default: "Cormorant Garamond";
   --font-title: "Bertholdr Mainzer Fraktur";
+  --font-color-default: #fff;
 }
 
 html {
   background: #000000;
   margin: 0 0;
   padding: 0px;
-  color: #ffffff;
+  color: var(--font-color-default);
   font-family: var(--font-default);
   font-size: 16px;
 }
 
 h1 {
-  color: #ffffff;
+  color: var(--font-color-default);
   font-family: var(--font-title);
   font-size: 36px;
 }
 
 h2 {
-  color: #ffffff;
+  color: var(--font-color-default);
+}
+
+h3 {
+  color: var(--font-color-default);
+  font-family: var(--font-title);
 }
 
 p {
+  color: var(--font-color-default);
   text-align: left;
   line-height: 1.2;
 }
 
 a {
   text-decoration: none;
+  color: var(--font-color-default);
+}
+
+a :visited {
+  color: #ffdddd
 }
 
 a :hover {
@@ -46,7 +58,7 @@ a :hover {
 }
 
 li {
-  color: #ffffff;
+  color: var(--font-color-default);
 }
 
 label {
