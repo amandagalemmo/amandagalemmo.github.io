@@ -25,8 +25,11 @@ html {
 
 h1 {
   color: var(--font-color-default);
-  font-family: var(--font-title);
   font-size: 36px;
+}
+
+.title {
+  font-family: var(--font-title);
 }
 
 h2 {
@@ -35,7 +38,6 @@ h2 {
 
 h3 {
   color: var(--font-color-default);
-  font-family: var(--font-title);
 }
 
 p {
@@ -49,11 +51,11 @@ a {
   color: var(--font-color-default);
 }
 
-a :visited {
+a:visited {
   color: #ffdddd
 }
 
-a :hover {
+a:hover, a :hover {
   color: #BC0119;
 }
 
