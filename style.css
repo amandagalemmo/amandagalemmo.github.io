@@ -11,7 +11,8 @@
 :root {
   --font-default: "Cormorant Garamond";
   --font-title: "Bertholdr Mainzer Fraktur";
-  --background-color: #BCA693;
+  --background-color: #f6eadf;
+  --background-color-textarea: #d7ccc2;
   --font-color: #0B100C;
   --link-color: #e1001e;
   --link-hover-color: #BC0119;
@@ -35,6 +36,15 @@ html {
   color: var(--font-color);
   font-family: var(--font-default);
   font-size: 16px;
+}
+
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 h1 {
@@ -95,9 +105,10 @@ label {
 }
 
 .body-container {
-  padding: 24px 64px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   height: 100%;
-  border: 4mm ridge rgba(255, 255, 255, 0.6);
 }
 
 .links-container {
@@ -138,6 +149,44 @@ label {
 
 .form-row input, .form-col textarea {
   width: 100%;
+  background-color: var(--background-color-textarea);
+  font-family: var(--font-default);
+  font-size: 16px;
+}
+
+.form-col textarea {
+  height: 256px;
+}
+
+.button {
+  font-size: 16px;
+  padding: 4px;
+  background-color: var(--background-color-textarea);
+}
+
+.post {
+  width: 68%;
+  padding: 24px 64px;
+  border: thick double rgba(0, 0, 0, 0.6);
+}
+
+.footer-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 24px 24px 8px;
+}
+
+.rc-scout-container {
+  padding: 8px;
+  border: 1px solid black;
+  width: fit-content;
+}
+
+.right-align {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .padding-bottom-sm {
