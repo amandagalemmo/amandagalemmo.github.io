@@ -3,7 +3,6 @@
     - allow map to resize with window? this is a stretch goal
     - add flagging
     - endgame. expose all bricks/hints*/
-
 // Initializations______________________________________________________________
 var canvas;
 var ctx;
@@ -22,30 +21,28 @@ var adjacent;  // {[tileIndex: number]: number}
 var score;
 var tiles; // 2d array of tile objects
 
-goalTileImgY = 32 * 4;
-goalTileImgX = 0;
-
-// @TODO: change to 32
-const TILEDIM = 32;                                   // Dimensions of each tile
+const TILEDIM = 32; // Dimensions of each tile
 
 const sprite = new Image();
 sprite.src = 'img/guy.png';
 
-const flag_img = new Image();
-flag_img.src = 'img/flag.png';
+const flagImg = new Image();
+flagImg.src = 'img/flag.png';
 
-const tilemapImg = new Image();
-tilemapImg.src = 'img/tilemap0.png';
+const tilemapSpriteSheet = new Image();
+tilemapSpriteSheet.src = "img/tilemap.png";
+
+const starSpriteSheet = new Image();
+starSpriteSheet.src = "img/star-animation.png";
+
+const goalSpriteSheet = new Image();
+goalSpriteSheet.src = "img/stairs.png";
 
 // Palette
 var colors = {
-  hidden: '#4188ad', //355070 //#964548 -- deeper red //#458396 -- blue
-  borderDistant: '#6d597a',
-  seenDistant: '#b56578',
-  borderNear: '#e56b6f', 
-  seenNear: '#eaac8b',
-  player: '#a3d6c8',    //rgba(163, 214, 200, 0.5)
-  goalTile: '#32b855',
+  empty: "#eaac8b",
+  hasNeighbors: "#e56b6f",
+  hidden: "#4188ad"
 }
 
 window.onload = function() {
@@ -64,6 +61,24 @@ window.addEventListener("keydown", function(e) {
   }
 }, false);
 
+class Tile {
+  cX; // x coord on canvas
+  cY; // y coord on canvas
+  index; // index of tile
+  visited = false;
+  numNeighbors; // num of neighboring mines
+  color = colors.hidden;
+  flagged = false;
+  goalTile = false;
+
+  constructor(row, col, adjacencyMap) {
+    this.cX = col * TILEDIM;
+    this.cY = row * TILEDIM;
+    this.index = row * COLS * col;
+    this.numNeighbors = adjacencyMap[row * COLS * col];
+  }
+}
+
 function initializeBoardState() {
   canvas = document.getElementById('gameBoard');
   ctx = canvas.getContext('2d');
@@ -74,11 +89,7 @@ function initializeBoardState() {
   ROWS = Math.floor(ctx.canvas.height / TILEDIM)
   COLS = Math.floor(ctx.canvas.width / TILEDIM);
   leftPadding = Math.ceil((ctx.canvas.width - (COLS * TILEDIM)) / 2);
-  // leftPadding = Math.ceil((ctx.canvas.width - (COLS * TILEDIM)) / 2);
-  console.log("leftPadding", leftPadding);
-  // topPadding = Math.ceil((ctx.canvas.height - (ROWS * TILEDIM)) / 2);
   topPadding = Math.ceil((ctx.canvas.height - (ROWS * TILEDIM)) / 2);
-  console.log("topPadding", topPadding);
   numTiles = ROWS * COLS;
   numMines = Math.ceil(numTiles * .125); //TODO extract to variable
 
@@ -98,7 +109,7 @@ function initializeBoardState() {
         cY: r * TILEDIM,       //coords for canvas
         num: (r * COLS + c), // Index of tile in flat array
         visited: false,
-        neighbors: adjacent[(r * COLS + c)],
+        numNeighbors: adjacent[(r * COLS + c)],
         color: colors.hidden,
         flagged: false,
         goalTile: false
@@ -118,10 +129,11 @@ function clickHandler(e) {
   console.log("clickR", clickR);
   if (tiles[clickR][clickC].flagged) {
     tiles[clickR][clickC].flagged = false;
+    drawTile(clickR, clickC);
   } else if (!tiles[clickR][clickC].visited) {
     tiles[clickR][clickC].flagged = true;
+    drawFlag(clickR, clickC);
   } else {return;}
-  drawTile(clickR, clickC);
 }
 
 function reportWindowSize() {
@@ -197,12 +209,18 @@ function setGoalTile() {
   while (adjacent[goalTileIndex] === 9) {
     goalTileIndex = getRandomInt(numTiles);
   }
-
-  // @TODO: make sure it's possible to reach goal from start
-  // rowNum = Math.floor(tileIndex/COLS);
-  // colNum = tileindex % COLS;
   tiles[Math.floor(goalTileIndex/COLS)][goalTileIndex % COLS].goalTile = true;
-  tiles[Math.floor(goalTileIndex/COLS)][goalTileIndex % COLS].color = colors.goalTile;
+}
+
+function assignTileColor(tile) {
+  if (tile.goalTile) return;
+  if (tile.numNeighbors === 0) {
+    tile.color = colors.empty;
+  } else if (tile.numNeighbors === 9) {
+    tile.color = colors.hidden;
+  } else {
+    tile.color = colors.hasNeighbors;
+  }
 }
 
 // Drawing functions____________________________________________________________
@@ -210,227 +228,396 @@ function drawBoard() {
   for (var r = 0; r < ROWS; r++) {
     for (var c = 0; c < COLS; c++) {
       drawTile(r, c);
-      drawPlayer();
-      if (tiles[r][c].visited) {drawHint(r,c)};
+      if (tiles[r][c].flagged) drawFlag(r,c);
+      if (tiles[r][c].visited) drawHint(r,c);
+      if (tiles[r][c].goalTile) drawGoal(r,c);
     }
+    // debugger;
   }
 }
 
 function drawTile(r, c) {
-  // Default tile values
-  var currTile = tiles[r][c];
-  let tilemapX = 0;
-  let tilemapY = 0;
-  ctx.beginPath();
-  if (currTile.goalTile) {
-    if (currTile.visited) {
-      tilemapX = TILEDIM * 1;
-      tilemapY = TILEDIM * 4;
-    } else {
-      tilemapX = 0;
-      tilemapY = TILEDIM * 5;
-    }
-  } else if (currTile.flagged) {
-    tilemapX = TILEDIM * 1;
-    tilemapY = TILEDIM * 5;
-  } else {
-    if (currTile.neighbors === 0 && currTile.visited) {
-      tilemapX = TILEDIM * 2;
-      tilemapY = TILEDIM * 4;
-    } else {
-      let numNeighborsVisited = 0;
-      var nIsVisited = (tiles[r-1] && tiles[r-1][c].visited);
-      if (nIsVisited) numNeighborsVisited++;
-      var wIsVisited = (tiles[r][c-1] && tiles[r][c-1].visited);
-      if (wIsVisited) numNeighborsVisited++;
-      var sIsVisited = (tiles[r+1] && tiles[r+1][c].visited);
-      if (sIsVisited) numNeighborsVisited++;
-      var eIsVisited = (tiles[r][c+1] && tiles[r][c+1].visited);
-      if (eIsVisited) numNeighborsVisited++;
-      var nHasNeighbors = (tiles[r-1] && tiles[r-1][c].neighbors);
-      var eHasNeighbors = (tiles[r][c+1] && tiles[r][c+1].neighbors);
-      var sHasNeighbors = (tiles[r+1] && tiles[r+1][c].neighbors);
-      var wHasNeighbors = (tiles[r][c-1] && tiles[r][c-1].neighbors);
-
-      if (currTile.visited) {
-        if (!nHasNeighbors) {
-          if (!eHasNeighbors) {
-            tilemapX = TILEDIM * 2;
-            tilemapY = TILEDIM * 1;
-          } else if (!wHasNeighbors) {
-            tilemapX = TILEDIM * 0;
-            tilemapY = TILEDIM * 1;
-          } else {
-            tilemapX = TILEDIM * 1;
-            tilemapY = TILEDIM * 1;
-          }
-        } else if (!eHasNeighbors) {
-          if (!sHasNeighbors) {
-            tilemapX = TILEDIM * 2;
-            tilemapY = TILEDIM * 3;
-          } else {
-            tilemapX = TILEDIM * 2;
-            tilemapY = TILEDIM * 2;
-          }
-        } else if (!sHasNeighbors) {
-          if (!wHasNeighbors) {
-            tilemapX = TILEDIM * 0;
-            tilemapY = TILEDIM * 3;
-          } else {
-            tilemapX = TILEDIM * 1;
-            tilemapY = TILEDIM * 3;
-          }
-        } else if (!wHasNeighbors) {
-          tilemapX = TILEDIM * 0;
-          tilemapY = TILEDIM * 2;
-        }
-
-        if (numNeighborsVisited === 2) {
-          if (!nIsVisited) {
-            if (!eIsVisited) {
-              tilemapX = TILEDIM * 6;
-              tilemapY = TILEDIM * 1;
-            } else if (!wIsVisited) {
-              tilemapX = TILEDIM * 4;
-              tilemapY = TILEDIM * 1;
-            }
-          } else if (!eIsVisited) {
-            if (!sIsVisited) {
-              tilemapX = TILEDIM * 6;
-              tilemapY = TILEDIM * 3;
-            }
-          } else if (!sIsVisited) {
-            if (!wIsVisited) {
-              tilemapX = TILEDIM * 4;
-              tilemapY = TILEDIM * 3;
-            }
-          }
-        } else if (numNeighborsVisited === 3) {
-          if (!nIsVisited) {
-            tilemapX = TILEDIM * 1;
-            tilemapY = TILEDIM * 3;
-          } else if (!eIsVisited) {
-            tilemapX = TILEDIM * 0;
-            tilemapY = TILEDIM * 2;
-          } else if (!sIsVisited) {
-            tilemapX = TILEDIM * 1;
-            tilemapY = TILEDIM * 1;
-          } else if (!wIsVisited) {
-            tilemapX = TILEDIM * 2;
-            tilemapY = TILEDIM * 2;
-          }
-        } else if (numNeighborsVisited === 1) {
-          if (nIsVisited) {
-            tilemapX = TILEDIM * 9;
-            tilemapY = TILEDIM * 4;
-          } else if (eIsVisited) {
-            tilemapX = TILEDIM * 9;
-            tilemapY = TILEDIM * 1;
-          } else if (sIsVisited) {
-            tilemapX = TILEDIM * 9;
-            tilemapY = TILEDIM * 3;
-          } else if (wIsVisited) {
-            tilemapX = TILEDIM * 10;
-            tilemapY = TILEDIM * 1;
-          }
-        }
-      } else {
-        if (numNeighborsVisited === 4) {
-          tilemapX = TILEDIM * 1;
-          tilemapY = TILEDIM * 2;
-        } else if (numNeighborsVisited === 2) { // @TODO implement numVisited === 3
-          if (nIsVisited) {
-            if (eIsVisited) {
-              tilemapX = TILEDIM * 10;
-              tilemapY = TILEDIM * 9;
-            } else if (wIsVisited) {
-              tilemapX = TILEDIM * 2;
-              tilemapY = TILEDIM * 9;
-            } else if (sIsVisited) {
-              tilemapX = TILEDIM * 9;
-              tilemapY = TILEDIM * 2;
-            }
-          } else if (eIsVisited) {
-            if (sIsVisited) {
-              tilemapX = TILEDIM * 3;
-              tilemapY = TILEDIM * 9;
-            } else if (wIsVisited) {
-              tilemapX = TILEDIM * 10;
-              tilemapY = TILEDIM * 3;
-            }
-          } else if (sIsVisited) {
-            if (wIsVisited) {
-              tilemapX = TILEDIM * 7;
-              tilemapY = TILEDIM * 9;
-            }
-          }
-        } else if (numNeighborsVisited === 1) {
-          if (nIsVisited) {
-            tilemapX = TILEDIM * 5;
-            tilemapY = TILEDIM * 4;
-          } else if (eIsVisited) {
-            tilemapX = TILEDIM * 3;
-            tilemapY = TILEDIM * 2;
-          } else if (sIsVisited) {
-            tilemapX = TILEDIM * 5;
-            tilemapY = TILEDIM * 0;
-          } else if (wIsVisited) {
-            tilemapX = TILEDIM * 7;
-            tilemapY = TILEDIM * 2;
-          }
-        }
-      }
-    }
-  }
-  if (!tilemapX && !tilemapY) {
-    ctx.rect(tiles[r][c].cX + leftPadding, tiles[r][c].cY + topPadding,
-      TILEDIM, TILEDIM);
-    ctx.fillStyle = tiles[r][c].color;
-  } else {
+  function drawTileImage(tileImgR, tileImgC, currTileX, currTileY) {
+    ctx.beginPath();
     ctx.drawImage(
-      tilemapImg,
-      tilemapX,
-      tilemapY,
+      tilemapSpriteSheet,
+      tileImgR * TILEDIM,
+      tileImgC * TILEDIM,
       TILEDIM,
       TILEDIM,
-      currTile.cX + leftPadding,
-      currTile.cY + topPadding,
+      currTileX + leftPadding,
+      currTileY + topPadding,
       TILEDIM,
       TILEDIM
     );
+    ctx.fill();
+    ctx.closePath();
   }
 
+  // Default tile values
+  var currTile = tiles[r][c];
+  let tilemapC = 0;
+  let tilemapR = 0;
+  
+  // First, fill with base color
+  ctx.beginPath();
+  ctx.rect(tiles[r][c].cX + leftPadding, tiles[r][c].cY + topPadding,
+    TILEDIM, TILEDIM);
+  ctx.fillStyle = tiles[r][c].color;
   ctx.fill();
   ctx.closePath();
+
+  // north is visited
+  const nIsVisited = tiles[r - 1] && tiles[r - 1][c].visited;
+  // south is visited
+  const sIsVisited = tiles[r + 1] && tiles[r + 1][c].visited;
+  // east is visited
+  const eIsVisited = tiles[r][c + 1] && tiles[r][c + 1].visited;
+  // west is visited
+  const wIsVisited = tiles[r][c - 1] && tiles[r][c - 1].visited;
+
+  // If currTile.numNeighbors == 0 and currTile.visited, do nothing
+  // Handle visible tiles with neighbors
+  if (currTile.numNeighbors > 0 && currTile.visited) {
+    // Handle tile's border with unvisited neighbors.
+    if (!nIsVisited) {
+      if (!sIsVisited) {
+        if (!wIsVisited) {
+          if (!eIsVisited) {
+            tilemapC = 8;
+            tilemapR = 6;
+          } else {
+            tilemapC = 7;
+            tilemapR = 5;
+          }
+        } else if (!eIsVisited) {
+          tilemapC = 8;
+          tilemapR = 5;
+        } else {
+          tilemapC = 7;
+          tilemapR = 4;
+        }
+      } else if (!wIsVisited) {
+        if (!eIsVisited) {
+          tilemapC = 7;
+          tilemapR = 6;
+        } else {
+          tilemapC = 3;
+          tilemapR = 5;
+        }
+      } else if (!eIsVisited) {
+        tilemapC = 5;
+        tilemapR = 5;
+      } else {
+        tilemapC = 4;
+        tilemapR = 5;
+      }
+    } else if (!sIsVisited) {
+      if (!wIsVisited) {
+        if (!eIsVisited) {
+          tilemapC = 7;
+          tilemapR = 7;
+        } else {
+          tilemapC = 3;
+          tilemapR = 7;
+        }
+      } else if (!eIsVisited) {
+        tilemapC = 5;
+        tilemapR = 7;
+      } else {
+        tilemapC = 4;
+        tilemapR = 7;
+      }
+    } else if (!wIsVisited) {
+      if (!eIsVisited) {
+        tilemapC = 8;
+        tilemapR = 7;
+      } else {
+        tilemapC = 3;
+        tilemapR = 6;
+      }
+    } else if (!eIsVisited) {
+      tilemapC = 5;
+      tilemapR = 6;
+    }
+
+    if (tilemapC || tilemapR) {
+      drawTileImage(tilemapC, tilemapR, currTile.cX, currTile.cY);
+      tilemapC = 0;
+      tilemapR = 0;
+    }
+
+    let nHasNeighbors = false;
+    let nwHasNeighbors = false;
+    let neHasNeighbors = false;
+    let sHasNeighbors = false;
+    let swHasNeighbors = false;
+    let seHasNeighbors = false;
+    let eHasNeighbors = false;
+    let wHasNeighbors = false;
+
+    if (tiles[r - 1] !== undefined) {
+      nHasNeighbors = !!tiles[r - 1][c].numNeighbors;
+      nwHasNeighbors = tiles[r - 1][c - 1] !== undefined &&
+        !!tiles[r - 1][c - 1].numNeighbors;
+      neHasNeighbors = tiles[r - 1][c + 1] !== undefined &&
+        !!tiles[r - 1][c + 1].numNeighbors;
+    }
+
+    if (tiles[r + 1] !== undefined) {
+      sHasNeighbors = !!tiles[r + 1][c].numNeighbors;
+      swHasNeighbors = tiles[r + 1][c - 1] !== undefined &&
+        !!tiles[r + 1][c - 1].numNeighbors;
+      seHasNeighbors = tiles[r + 1][c + 1] !== undefined &&
+        !!tiles[r + 1][c + 1].numNeighbors;
+    }
+    eHasNeighbors = tiles[r][c + 1] !== undefined &&
+      !!tiles[r][c + 1].numNeighbors;
+    wHasNeighbors = tiles[r][c - 1] !== undefined &&
+      !!tiles[r][c - 1].numNeighbors;
+    
+    // Handle dithering
+    let overrideCheck = false;
+    if (nIsVisited && !nHasNeighbors) {
+      if (
+        sIsVisited && sHasNeighbors &&
+        eIsVisited && eHasNeighbors &&
+        !seHasNeighbors
+      ) {
+        tilemapC = 5;
+        tilemapR = 2;
+      } else if (
+        sIsVisited && sHasNeighbors &&
+        wIsVisited && wHasNeighbors &&
+        !swHasNeighbors
+      ) {
+        tilemapC = 4;
+        tilemapR = 2;
+      } else if (eIsVisited && !eHasNeighbors) {
+        tilemapC = 4;
+        tilemapR = 1;
+      } else if (wIsVisited && !wHasNeighbors) {
+        tilemapC = 5;
+        tilemapR = 1;
+      } else { // @TODO might need to handle more conditions
+        tilemapC = 2;
+        tilemapR = 1;
+      }
+    } else if (sIsVisited && !sHasNeighbors) {
+      if (
+        nIsVisited && nHasNeighbors &&
+        eIsVisited && eHasNeighbors &&
+        !neHasNeighbors
+      ) {
+        tilemapC = 3;
+        tilemapR = 2;
+      } else if (
+        nIsVisited && nHasNeighbors &&
+        wIsVisited && wHasNeighbors &&
+        !nwHasNeighbors
+      ) {
+        tilemapC = 2;
+        tilemapR = 2;
+      } else if (eIsVisited && !eHasNeighbors) {
+        tilemapC = 4;
+        tilemapR = 0;
+      } else if (wIsVisited && !wHasNeighbors) {
+        tilemapC = 5;
+        tilemapR = 0;
+      } else { // @TODO might need to handle more conditions
+        tilemapC = 2;
+        tilemapR = 0;
+      }
+    } else if (eIsVisited && !eHasNeighbors) {
+      if (
+        nIsVisited && nHasNeighbors &&
+        wIsVisited && wHasNeighbors &&
+        !nwHasNeighbors
+      ) {
+        tilemapC = 3;
+        tilemapR = 3;
+      } else if (
+        sIsVisited && sHasNeighbors &&
+        wIsVisited && wHasNeighbors &&
+        !swHasNeighbors
+      ) {
+        tilemapC = 2;
+        tilemapR = 3;
+      } else {
+        tilemapC = 3;
+        tilemapR = 1;
+      }
+    } else if (wIsVisited && !wHasNeighbors) {
+      if (
+        nIsVisited && nHasNeighbors &&
+        eIsVisited && eHasNeighbors &&
+        !neHasNeighbors
+      ) {
+        tilemapC = 4;
+        tilemapR = 3;
+      } else if (
+        sIsVisited && sHasNeighbors &&
+        eIsVisited && eHasNeighbors &&
+        !seHasNeighbors
+      ) {
+        tilemapC = 5;
+        tilemapR = 3;
+      } else {
+        tilemapC = 3;
+        tilemapR = 0;
+      }
+    } else if (
+      !nwHasNeighbors &&
+      nIsVisited && nHasNeighbors &&
+      wIsVisited && wHasNeighbors
+    ) {
+      if (
+        !seHasNeighbors &&
+        sIsVisited && sHasNeighbors &&
+        eIsVisited && eHasNeighbors
+      ) {
+        tilemapC = 1;
+        tilemapR = 2;
+      } else {
+        tilemapC = 1;
+        tilemapR = 1;
+      }
+    } else if (
+      !neHasNeighbors &&
+      nIsVisited && nHasNeighbors &&
+      eIsVisited && eHasNeighbors
+    ) {
+      if (
+        !swHasNeighbors &&
+        sIsVisited && sHasNeighbors &&
+        wIsVisited && wHasNeighbors
+      ) {
+        tilemapC = 0;
+        tilemapR = 2;
+      } else {
+        tilemapC = 0;
+        tilemapR = 1;
+      }
+    } else if (
+      !seHasNeighbors &&
+      sIsVisited && sHasNeighbors &&
+      eIsVisited && eHasNeighbors
+    ) {
+      tilemapC = 0;
+      tilemapR = 0;
+      overrideCheck = true;
+    } else if (
+      !swHasNeighbors &&
+      sIsVisited && sHasNeighbors &&
+      wIsVisited && wHasNeighbors
+    ) {
+      tilemapC = 1;
+      tilemapR = 0;
+    }
+    
+    if (tilemapC || tilemapR || overrideCheck) {
+      // drawing dither
+      // console.log(`tilemap coords (c, r) (${tilemapC}, ${tilemapR})`);
+      // const logString = `nHasNeighbors ${nHasNeighbors}\nsHasNeighbors ${sHasNeighbors}\neHasNeighbors ${eHasNeighbors}\nwHasNeighbors ${wHasNeighbors}\nnwHasNeighbors ${nwHasNeighbors}\nneHasNeighbors ${neHasNeighbors}\nseHasNeighbors ${seHasNeighbors}\nswHasNeighbors ${swHasNeighbors}\nnIsVisited ${nIsVisited}\nsIsVisited ${sIsVisited}\neIsVisited ${eIsVisited}\nwIsVisited ${wIsVisited}`;
+      // console.log(logString);
+      drawTileImage(tilemapC, tilemapR, currTile.cX, currTile.cY);
+      tilemapC = 0;
+      tilemapR = 0;
+      overrideCheck = false;
+      // debugger;
+    }
+  }
+
+  // Handle borders for unvisited tiles
+  if (!currTile.visited) {
+    if (nIsVisited) {
+      if (eIsVisited && wIsVisited && sIsVisited) {
+        tilemapC = 1;
+        tilemapR = 5;
+      } else if (eIsVisited && sIsVisited) {
+        tilemapC = 8;
+        tilemapR = 2;
+      } else if (wIsVisited && sIsVisited) {
+        tilemapC = 7;
+        tilemapR = 2;
+      } else if (wIsVisited && eIsVisited) {
+        tilemapC = 7;
+        tilemapR = 0;
+      } else if (eIsVisited) {
+        tilemapC = 1;
+        tilemapR = 7;
+      } else if (wIsVisited) {
+        tilemapC = 0;
+        tilemapR = 7;
+      } else {
+        tilemapC = 4;
+        tilemapR = 8;
+      }
+    } else if (sIsVisited) {
+      if (eIsVisited && wIsVisited) {
+        tilemapC = 7;
+        tilemapR = 1;
+      } else if (eIsVisited) {
+        tilemapC = 1;
+        tilemapR = 8;
+      } else if (wIsVisited) {
+        tilemapC = 0;
+        tilemapR = 8;
+      } else {
+        tilemapC = 4;
+        tilemapR = 4;
+      }
+    } else if (eIsVisited) {
+      tilemapC = 2;
+      tilemapR = 6;
+    } else if (wIsVisited) {
+      tilemapC = 6;
+      tilemapR = 6;
+    }
+
+    if (tilemapR || tilemapC) {
+      drawTileImage(tilemapC, tilemapR, currTile.cX, currTile.cY);
+      tilemapC = 0;
+      tilemapR = 0;
+    }
+  }
+  ctx.save();
 }
 
-//ctx.rect(tiles[playerR][playerC].cX + leftPadding, tiles[playerR][playerC].cY + topPadding,
-//         TILEDIM, TILEDIM);
-//ctx.fillStyle = 'rgba(163, 214, 200, 0.5)';
-// ctx.lineWidth = '3';
-// ctx.strokeStyle = colors['player'];
 function drawPlayer() {
   ctx.beginPath();
   ctx.drawImage(sprite, tiles[playerR][playerC].cX + leftPadding,
     tiles[playerR][playerC].cY + topPadding);
   ctx.fill();
   ctx.closePath();
+  ctx.save();
 }
 
 function drawHint(r, c) { // i've done something stupid here
-  if (tiles[r][c].neighbors > 8) {
-    ctx.beginPath();
-    ctx.drawImage(flag_img, tiles[r][c].cX + leftPadding, tiles[r][c].cY + topPadding);
-    ctx.fill();
-    ctx.closePath();
-  } else if (tiles[r][c].goalTile) {
+  if (tiles[r][c].goalTile) {
     return;
   } else {
     ctx.font = '12px Arial';
     ctx.fillStyle = 'white';
-    ctx.fillText(tiles[r][c].neighbors>0 ? `${tiles[r][c].neighbors}` : ' ',
+    ctx.fillText(tiles[r][c].numNeighbors>0 ? `${tiles[r][c].numNeighbors}` : ' ',
       tiles[r][c].cX + (TILEDIM * 0.33) + leftPadding, tiles[r][c].cY + (TILEDIM * 0.66) + topPadding, TILEDIM);
-  }  
+  }
+  ctx.save();
+}
+
+function drawFlag(r, c) {
+  ctx.beginPath();
+  ctx.drawImage(flagImg, c * TILEDIM + leftPadding, r * TILEDIM + topPadding);
+  ctx.fill();
+  ctx.closePath();
+}
+
+function drawGoal(r, c) {
+  const imageSource = tiles[r][c].visited ? goalSpriteSheet : starSpriteSheet;
+  ctx.beginPath();
+  ctx.drawImage(imageSource, 0, 0, TILEDIM, TILEDIM, c * TILEDIM + leftPadding, r * TILEDIM + topPadding, TILEDIM, TILEDIM);
+  ctx.fill();
+  ctx.closePath();
 }
 
 function draw() {
@@ -442,8 +629,8 @@ function draw() {
 // Move player__________________________________________________________________
 function move() {
   // if the tile is a mine...
-  if (tiles[playerR][playerC].neighbors === 9) {
-    sprite.src = 'img/guySad.png';
+  if (tiles[playerR][playerC].numNeighbors === 9) {
+    // sprite.src = 'img/guySad.png';
     handleGameOver();
     return;
   }
@@ -478,13 +665,13 @@ function handleTile(r, c) {
   tiles[r][c].visited = true;
   let toQueue = null;
   try {
-    assignColor(tiles[r][c]);
+    assignTileColor(tiles[r][c]);
   } catch (error) {
     console.error(error);
     console.log(r + ' ' + c);
     return;
   }
-  if (tiles[r][c].neighbors === 0) {
+  if (tiles[r][c].numNeighbors === 0) {
     toQueue = new Array();
     for (i = -1; i <= 1; i += 2) {
       if ((r + i > -1 && r + i < ROWS) && !tiles[r + i][c].visited) {
@@ -514,27 +701,16 @@ function handleTile(r, c) {
     toQueue = new Array();
     for (i = -1; i <= 1; i += 2) {
       if ((r + i > -1 && r + i < ROWS) && !tiles[r + i][c].visited &&
-        tiles[r + i][c].neighbors == 0) {
+        tiles[r + i][c].numNeighbors == 0) {
         toQueue.push(tiles[r + i][c]);
       }
       if ((c + i > -1 && c + i < COLS) && !tiles[r][c + i].visited &&
-        tiles[r][c + i].neighbors == 0) {
+        tiles[r][c + i].numNeighbors == 0) {
         toQueue.push(tiles[r][c + i]);
       }
     }
   }
   return toQueue;
-}
-
-function assignColor(tile) {
-  if (tile.goalTile) return;
-  if (tile.neighbors === 0) {
-    tile.color = colors.seenNear;
-  } else if (tile.neighbors === 9) {
-    return;
-  } else {
-    tile.color = colors.borderNear;
-  }
 }
 
 function handleGameOver() {
