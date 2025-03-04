@@ -192,3 +192,10 @@ label {
 .padding-bottom-sm {
   padding-bottom: 4px;
 }
+
+#qrshow-qrcode {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 88px;
+}
